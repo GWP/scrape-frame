@@ -1,0 +1,22 @@
+{
+  "name": "qeh-scraper",
+  "version": "1.0.0",
+  "description": "Project that gathers data for data-mining and machine learning purposes.",
+  "main": "scrape-frame.js",
+  "scripts": {
+    "test": "node ./node_modules/mocha/bin/mocha --recursive --reporter spec ./test"
+  },
+  "author": "",
+  "license": "",
+  "dependencies": {
+    "bluebird": "^3.4.1",
+    "lodash": "^4.13.1",
+    "nightmare": "^2.5.3",
+    "x-ray": "^2.3.0",
+    "x-ray-nightmare": "^0.1.2"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-util": "^3.0.7"
+  }
+}

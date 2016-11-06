@@ -1,0 +1,604 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"push",
+				"pushPromise"
+			],
+			[
+				"creat",
+				"createScrape"
+			],
+			[
+				"direc",
+				"direct-testing-file"
+			],
+			[
+				"te",
+				"testFile"
+			],
+			[
+				"selec",
+				"selectorFile"
+			],
+			[
+				"exmp",
+				"exampleString"
+			],
+			[
+				"scrape",
+				"scrape-frame"
+			],
+			[
+				"new",
+				"newScrape"
+			],
+			[
+				"select",
+				"selectorMap"
+			],
+			[
+				"writ",
+				"writeFileP"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "package.json",
+			"settings":
+			{
+				"buffer_size": 544,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "var fs = require('fs');\npath = require('path');\nvar Promise = require('bluebird');\n\nvar appendFileP = Promise.promisify(fs.appendFile);\nvar writeFileP = Promise.promisify(fs.writeFile);\n\nvar name = process.argv[3];\nvar selectorFile;\nvar testingFile;\n//node scrape-frame new name url method [direct, nightmare, crawler]\n//node scrape-frame new name url page\n//node scrape-frame run name\n//npm test\n\n\n\nfunction main(){\n    if (process.argv[2] === 'new'){\n        var promise = new Promise(function(resolve, reject){\n            fs.mkdirSync('scrapers/' + name);\n            resolve();\n        });\n\n        promise.then(createScrape)\n            .then(function(fileArray){\n                var fileNames = ['scrape.js', 'selectors.js', 'testing-file.js', 'gulpfile.js', 'results.json'];\n                console.log(fileArray.length);\n                for (var i = 0; i < fileArray.length; i++){\n                        console.log(\"writing \", fileNames[i]);\n                        for(var c = 0; c < fileArray[i].length; c++){\n                            appendFileP('./scrapers/' + name + '/' + fileNames[i], fileArray[i][c] + '\\n');\n                        }\n                }\n                return fileArray;\n            })\n            .then(function(fileArray){\n                console.log(\"The frame for your scraper has been created!\");\n                console.log(\"Look for it in the 'scrapers' directory.\");\n                console.log(\"Open the instructions.txt file to configure it to your needs.\");\n                console.log(\"Happy scraping!\");\n                return fileArray;\n            })\n\n        \n    }\n\n\n    function createScrape(){\n        var url = (process.argv[4] ? process.argv[4].toString() : 'TBD');\n        var fileArray = [];\n        var newScrape;\n        var testFile;\n        var pushPromise = new Promise(function(resolve,reject){\n            resolve();\n        })\n        switch (process.argv[5]){\n            case 'direct':\n                newScrape = './directScrape.js';\n                testFile = './testing-file.js'; \n                break;\n            case 'nightmare':\n                newScrape = './nightmareScrape.js'; \n                testFile = './nightmare-testing-file.js';    \n                break;\n            case 'page-crawler':\n                newScrape = './page-crawler.js';\n                testFile = './direct-testing-file';    \n            default:\n                //var output = findScrapeType(url);\n                newScrape = output[0];\n                testFile = output[1];\n        }\n\n        var newFileArray = pushPromise.then(function(){\n            fileArray.push(fs.readFileSync(newScrape).toString().split('\\n'));\n        })\n        .then(function(){\n            fileArray.push(fs.readFileSync('./skeleton-selectors.js').toString().split('\\n'));\n        })\n        .then(function(){\n            fileArray.push(fs.readFileSync(testFile).toString().split('\\n'));\n        })\n        .then(function(){\n            fileArray.push(fs.readFileSync('./gulpfile.js').toString().split('\\n'));\n        })\n        .then(function(){\n            fileArray.push(fs.readFileSync('./results.json').toString().split('\\n'));\n            return fileArray;\n        })\n        .then(function(fileArr){\n            fileArray[0][24] = fileArray[0][24].split(\"'\",2) + url + \";\";\n            return fileArray;\n        })\n\n        return newFileArray;\n    }\n\n}\n\n// function findScrapeType(url, page = null){\n//     if (page === null){\n//         //attempt to navigate to a far away page, and then directly access that page\n//         nightmare\n//             .goto(url)\n//             .evaluate() //find a button and return it\n//             .then(function(foundButton){\n//                 return nightmare\n//                     .click(foundButton)\n//                     .wait(2500)\n//                     .evaluate() //return url of page\n//                     .then(function(pageURL){\n//                         return nightmare\n//                             .goto(pageURL)\n//                             .evaluate() //see what is on page\n//                             .then(function(result){\n//                                 //figure out if page is timeout/error or if it is full page. Compare to full page?\n//                             })\n//                     })\n//             })\n//     }\n//     else {\n//         //crawl to page, record, and then directly access page and compare.\n//     }\n// }\n\nmain();\n\n// module.exports = {\n//     //findScrapeType: findScrapeType,\n//     createScrape: createScrape\n// };\n",
+			"file": "scrape-frame.js",
+			"file_size": 5857,
+			"file_write_time": 131208703290000000,
+			"settings":
+			{
+				"buffer_size": 4563,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Users/will.price/Code/services/workflow-manager/server/test/customer-command-test.js",
+			"settings":
+			{
+				"buffer_size": 2992,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "var scrape-frame = require('./scrape-frame');\n\nit('findScrapeType should return direct', function(done){\n\tassert.strictEqual(findScrapeType('www.reddit.com'), 'direct');\n\tdone();\n})\n\n\n\nit('findScrapeType should return nightmare', function(done){\n\tassert.strictEqual(findScrapeType(propURL), 'nightmare');\n\tdone();\n})\n\n\nit('created file should be equal to the chosen scrape type with appropriate user entered values included', function(done){\n\tfileArray.push(fs.readFileSync(newScrape).toString().split('\\n'));\n\t\n})\n",
+			"file": "test/tests.js",
+			"file_size": 467,
+			"file_write_time": 131194594940000000,
+			"settings":
+			{
+				"buffer_size": 515,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "page-crawler.js",
+			"settings":
+			{
+				"buffer_size": 4687,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "nightmareScrape.js",
+			"settings":
+			{
+				"buffer_size": 4558,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "directScrape.js",
+			"settings":
+			{
+				"buffer_size": 3385,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Users/will.price/Code/services/superdatasciencecode/node-scraper/pwcva/scrape.js",
+			"settings":
+			{
+				"buffer_size": 10648,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 392.0,
+		"last_filter": "pi",
+		"selected_items":
+		[
+			[
+				"pi",
+				"Package Control: Install Package"
+			],
+			[
+				"package in",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 485.0
+	},
+	"console":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/Users/will.price/Code/scrape-frame",
+		"/Users/will.price/Code/scrape-frame/examples",
+		"/Users/will.price/Code/scrape-frame/examples/hidalgo",
+		"/Users/will.price/Code/scrape-frame/examples/jeffco",
+		"/Users/will.price/Code/scrape-frame/examples/reddit",
+		"/Users/will.price/Code/scrape-frame/scrapers",
+		"/Users/will.price/Code/scrape-frame/test"
+	],
+	"file_history":
+	[
+		"/Users/will.price/Code/scrape-frame/examples/jeffco/scrape.js",
+		"/Users/will.price/Code/scrape-frame/scrape-frame.js",
+		"/Users/will.price/Code/scrape-frame/tests.js",
+		"/Users/will.price/Code/scrape-frame/testing-file.js",
+		"/Users/will.price/Code/scrape-frame/examples/reddit/iterate-scrape.js",
+		"/Users/will.price/Code/scrape-frame/nightmare-testing-file.js",
+		"/Users/will.price/Code/scrape-frame/skeleton-scrape.js",
+		"/Users/will.price/Code/scrape-frame/skeleton-selectors.js",
+		"/Users/will.price/Code/services/superdatasciencecode/node-scraper/tmp5.js",
+		"/Users/will.price/Code/scrape-frame/gulpfile.js",
+		"/Users/will.price/Code/scrape-frame/flow.txt",
+		"/Users/will.price/Code/services/superdatasciencecode/node-scraper/hidalgoco/idscraper.js",
+		"/Users/will.price/Code/scrape-frame/examples/jeffco/newSelectors.js",
+		"/Users/will.price/Code/services/static-assets/scripts/base/model/base.js",
+		"/Users/will.price/Code/services/static-assets/stylus/mindi/purchase-page.styl",
+		"/Users/will.price/Code/services/static-assets/scripts/base/view/textbox.js",
+		"/Users/will.price/Code/services/static-assets/scripts/base/model/textbox.js",
+		"/Users/will.price/Code/services/static-assets/scripts/base/collection.js",
+		"/Users/will.price/Code/services/static-assets/scripts/base/view/creditCardType.js",
+		"/Users/will.price/Code/services/static-assets/scripts/base/model/coverage.js",
+		"/Users/will.price/Code/services/static-assets/scripts/base/model/creditCardType.js",
+		"/Users/will.price/Code/services/static-assets/scripts/base/view/coverage.js",
+		"/Users/will.price/Code/scrape-frame/examples/jeffco/selectors.js",
+		"/Users/will.price/Code/scrape-frame/newScrape.js",
+		"/Users/will.price/Library/Application Support/Sublime Text 3/Packages/Package Control/Package Control.sublime-settings",
+		"/Users/will.price/Code/services/static-assets/scripts/base/view/carousel.js",
+		"/Users/will.price/Code/services/static-assets/scripts/base/model/carousel.js",
+		"/Users/will.price/Code/services/static-assets/scripts/base/googleLocationHelper.js",
+		"/Users/will.price/Code/services/static-assets/scripts/base/model/dropdown.js",
+		"/Users/will.price/Code/services/static-assets/resources/scripts/dev/mindi_renters.js",
+		"/Users/will.price/Code/services/static-assets/static-assets.sublime-project",
+		"/Users/will.price/Code/services/static-assets/scripts/base/view/counter.js",
+		"/Users/will.price/Code/dev/static-assets/scripts/base/tracking.js",
+		"/Users/will.price/Code/dev/static-assets/scripts/mindi/renters/view/sideRail.js",
+		"/Users/will.price/Code/dev/static-assets/resources/scripts/dev/mindi_homeowners.js",
+		"/Users/will.price/Code/dev/static-assets/resources/scripts/dev/mindi_renters.js"
+	],
+	"find":
+	{
+		"height": 35.0
+	},
+	"find_in_files":
+	{
+		"height": 93.0,
+		"where_history":
+		[
+			"/Users/will.price/Code/services/static-assets/scripts",
+			"/Users/will.price/Code/services/static-assets",
+			"*.js",
+			"",
+			"/Users/will.price/Code/dev/static-assets"
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"wells fargo",
+			"liability",
+			"cleanvalue",
+			"validateelement",
+			"creditcard",
+			"coverage__errorText",
+			"additional",
+			"validate",
+			"focus",
+			"validate",
+			"displayerror",
+			"validationerror",
+			"scrollto",
+			"account number",
+			"payment",
+			"City",
+			"ZipCode",
+			"geocodeAddress",
+			"geocode",
+			"geocodeAddress",
+			"streetviewpan",
+			"update",
+			"streetviewpanorama",
+			"boarders",
+			"claimdetail"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 3,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "package.json",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 544,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								168,
+								168
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JSON.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "scrape-frame.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4563,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2054,
+								2054
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 708.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "/Users/will.price/Code/services/workflow-manager/server/test/customer-command-test.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2992,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1057,
+								1057
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "test/tests.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 515,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								511,
+								511
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "page-crawler.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4687,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1483,
+								1483
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "nightmareScrape.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4558,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								626,
+								626
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "directScrape.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3385,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								472,
+								472
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "/Users/will.price/Code/services/superdatasciencecode/node-scraper/pwcva/scrape.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 10648,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								398,
+								398
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 370.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 23.0
+	},
+	"input":
+	{
+		"height": 31.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "scrape-frame.sublime-project",
+	"replace":
+	{
+		"height": 42.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"",
+				"~/Code/services/mindi-rules-engine/mindi-rules-engine.sublime-project"
+			]
+		],
+		"width": 380.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 250.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
